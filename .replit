@@ -1,0 +1,60 @@
+modules = ["nodejs-20", "web", "postgresql-16"]
+run = "npm run dev"
+hidden = [".config", ".git", "generated-icon.png", "node_modules", "dist"]
+
+[nix]
+channel = "stable-24_05"
+packages = ["ffmpeg"]
+
+[deployment]
+deploymentTarget = "autoscale"
+build = ["npm", "run", "build"]
+run = ["npm", "run", "start"]
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+
+[[ports]]
+localPort = 5001
+externalPort = 3000
+
+[[ports]]
+localPort = 44963
+externalPort = 3001
+
+[env]
+PORT = "5000"
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Start application"
+
+[[workflows.workflow]]
+name = "Start application"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run dev"
+waitForPort = 5000
+
+[agent]
+mockupState = "FULLSTACK"
+
+[userenv]
+
+[userenv.shared]
+NAVER_SMTP_PASSWORD = "?hl5uxii1208!"
+ADMIN_PASSWORD = "1234"
+VAPID_PUBLIC_KEY = "BMALvigOMhH9OcPF0V6acePTyKmpLi_3aElsORq9aAPbMXb-Ziilg_gK2xzTEp_N--BHZBCQT8x_IADf1SlsO60"
+VAPID_PRIVATE_KEY = "b-aMHZjY3AqEygLTStt0aXzvLkg3r2pkWHhgFgcu5AE"
+VAPID_SUBJECT = "mailto:4upia@naver.com"
